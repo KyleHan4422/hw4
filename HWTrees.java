@@ -5,8 +5,6 @@
 //HW 4 QUESTIONs: provide the implementation of the methods below + TEST all your methods in the main by using the menu in the main (see main method)
 //Make sure your code works (either compiled in command line (terminal) or in Eclipse. 
 
-
-
 import java.io.*;
 import java.util.*;               // for Stack class if needed
 ////////////////////////////////////////////////////////////////
@@ -16,7 +14,6 @@ class Node
    public double dData;           // data item
    public Node leftChild;         // this node's left child
    public Node rightChild;        // this node's right child
-
    }  // end class Node  
 ////////////////////////////////////////////////////////////////
 class Tree
@@ -143,17 +140,31 @@ class Tree
 // -------------------------------------------------------------
    public void displayTreeLevels() // this method will display the nodes at each level in the tree. (The method should print the nodes (id) as: Level1:.... - Level2:... 
       {
-      
-
-
-
-
-
-
+        if (root == null) { 
+           System.out.println("Tree is empty."); 
+           return; 
+        }
+         
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        int level = 1;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            System.out.print("Level " + level + ": ");
+            for (int i = 0; i < size; i++) {
+                Node current = queue.poll();
+                System.out.print(current.iData + " ");
+                if (current.leftChild != null) {
+                   queue.add(current.leftChild);
+                }
+                if (current.rightChild != null) {
+                   queue.add(current.rightChild);
+                }
+            }
+            System.out.println();
+            level++;
+        }
       }  // end displayTreeLevels()
-
-
-
 
 // -------------------------------------------------------------
 
@@ -165,25 +176,78 @@ class Tree
 
     //if the node does not have children you display message that the nodes Do not have children. 
     // or if one of the child is null, then you display a message stating that. 
-
-
+       Node current = root;
+       Node target = null;
+ 
+        // Search for the node matching both iData and dData
+        while (current != null) {
+            if (current.iData == id && current.dData == dd) {
+                target = current;
+                break;
+            } 
+            else if (id < current.iData) {
+                current = current.leftChild;
+            } 
+            else {
+                current = current.rightChild;
+            }
+        }
+ 
+        if (target == null) {
+            System.out.println("Node with iData=" + id + " and dData=" + dd + " not found.");
+            return;
+        }
+ 
+        boolean hasChildren = (target.leftChild != null || target.rightChild != null);
+        if (!hasChildren) {
+            System.out.println("Node " + id + " does not have any children.");
+            return;
+        }
+ 
+        if (target.leftChild != null) {
+            System.out.println("Left child:  iData: " + target.leftChild.iData + "  dData: " + target.leftChild.dData);
+        }
+        else {
+            System.out.println("Left child:  null (no left child)");
+        }
+ 
+        if (target.rightChild != null) {
+            System.out.println("Right child: iData: " + target.rightChild.iData + "  dData: " + target.rightChild.dData);
+        }
+        else {
+            System.out.println("Right child: null (no right child)");
+        }
   }
-
-
+      
 // -------------------------------------------------------------
 
 public void displayLeaves() //this method will display all the leaves (iData and dData) of all the leaves)
   {
-
-    
-
-
+      System.out.print("Leaves: ");
+        Stack<Node> stack = new Stack<>();
+     
+        if (root != null) {
+           stack.push(root);
+        }
+     
+        while (!stack.isEmpty()) {
+            Node node = stack.pop();
+            if (node.leftChild == null && node.rightChild == null) {
+                System.out.print("iData=" + node.iData + ", dData=" + node.dData);
+            } 
+            else {
+                if (node.rightChild != null) {
+                   stack.push(node.rightChild);
+                }
+                if (node.leftChild  != null) {
+                   stack.push(node.leftChild);
+                }
+            }
+        }
+        System.out.println();
   }
 
-
 // -------------------------------------------------------------
-
-
 
 }  // end class Tree
 
@@ -195,7 +259,7 @@ class HWTrees
       {
 
       //You can modify this code of the main as much as you want - as longs as  ALL the methods above are being tested and called. 
-
+      Scanner kb = new Scanner(System.in);
 
       int value;
 
@@ -231,8 +295,78 @@ class HWTrees
    
 
       */
-     
 
+       boolean running = true;
+        while (running) {
+            
+           System.out.println("\n===== MENU =====");
+            System.out.println("1. Traverse");
+            System.out.println("2. isBST");
+            System.out.println("3. Delete");
+            System.out.println("4. Display Tree by Levels");
+            System.out.println("5. Display My Children");
+            System.out.println("6. Insert a New Node");
+            System.out.println("7. Display All the Leaves");
+            System.out.println("0. Exit");
+            System.out.print("Enter choice: ");
+ 
+            int choice = kb.nextInt();
+ 
+            switch (choice) {
+                case 1:
+                    System.out.print("Traversal type (1=Preorder, 2=Inorder, 3=Postorder): ");
+                    int tType = kb.nextInt();
+                    theTree.traverse(tType);
+                    break;
+ 
+                case 2:
+                    theTree.isBST();
+                    break;
+ 
+                case 3:
+                    System.out.print("Enter key (iData) to delete: ");
+                    int delKey = kb.nextInt();
+                    boolean result = theTree.delete(delKey);
+                    System.out.println(result? "Node(s) with iData=" + delKey + " deleted." : "No node found with iData=" + delKey);
+                    break;
+ 
+                case 4:
+                    theTree.displayTreeLevels();
+                    break;
+ 
+                case 5:
+                    System.out.print("Enter iData of node: ");
+                    int cId = kb.nextInt();
+                    System.out.print("Enter dData of node: ");
+                    double cDd = kb.nextDouble();
+                    theTree.displaymyChilds(cId, cDd);
+                    break;
+ 
+                case 6:
+                    System.out.print("Enter iData: ");
+                    int newId = kb.nextInt();
+                    System.out.print("Enter dData: ");
+                    double newDd = kb.nextDouble();
+                    theTree.insert(newId, newDd);
+                    System.out.println("Inserted: iData=" + newId + ", dData=" + newDd);
+                    break;
+ 
+                case 7:
+                    theTree.displayLeaves();
+                    break;
+ 
+                case 0:
+                    running = false;
+                    System.out.println("Goodbye!");
+                    break;
+ 
+                default:
+                    System.out.println("Invalid choice, try again.");
+            }
+        }
+        kb.close();
+    }
+     
 // -------------------------------------------------------------
    }  // end class TreeApp
 ////////////////////////////////////////////////////////////////
