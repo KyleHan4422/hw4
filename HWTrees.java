@@ -120,20 +120,107 @@ class Tree
 ///////////////////////////////////////////////////////////////
     private void isBST(Node localRoot) //this method will take a tree as an input and will PRINT to the screen if the tree is a BST or NOT.
     {
-   
+       if(checkTheBST(localRoot, Integer.MIN_VALUE, Integer.MAX_VALUE) {
+          System.out.print("Is tree.");
+       }
+       else {
+          System.out.print("Is not tree.");
+      }
+    }
+    //added the checker
+    //checks if less than min or max
+    public boolean checkTheBST(Node localRoot, int min, int max) {
+       if(localRoot==null) {
+       return true;
+       }
+       if(localRoot.iData<=min||localRoot.iData>=max) {
+       return false;
+       }
+    //calls itself recursively
+    return checkTheBST(localRoot.leftChild, min, localRoot.iData) && checkTheBST(localRoot.rightChild, localRoot.iData, max);    
     } 
 
 // -------------------------------------------------------------
    public boolean delete(int key) // delete node with given key (iData) (if there are multiple nodes match key with iData you have to delete all of them.
       {                           // (assumes non-empty list)
-      
+         boolean has = false;
 
+         while(deletea(key)) {
+            has = true;
+         }
 
-                    
-
-
-
-
+        return has;
+    }
+      //new method to delete
+   private boolean deletea(int key)
+   {
+       Node current = root;
+       Node parent = root;
+       boolean isLeftChild = true;
+//checks if it hasnt found the key yet
+       while(current != null && current.iData != key) {
+           parent = current;
+           //traverses to left/right child based on key and current
+           if(key < current.iData) {
+               isLeftChild = true;
+               current = current.leftChild;
+           }
+           else
+           {
+               isLeftChild = false;
+               current = current.rightChild;
+           }
+          }
+          if(current==null) {
+             return false;
+          }
+      //first case, no chlidren
+       if(current.leftChild ==null&& current.rightChild==null) {
+          if(current == root) {
+          root = null;
+       }
+       else if(isLeftChild) {
+          parent.leftChild = null;
+       }
+       else {
+          parent.rightChild = null;
+       }
+       }
+      //second case, one child right
+       else if(current.leftChild == null && current.rightChild != null)
+       {
+           if(current == root)
+               root = current.rightChild;
+           else if(isLeftChild)
+               parent.leftChild = current.rightChild;
+           else
+               parent.rightChild = current.rightChild;
+       }
+      //third case, one child left
+      else if(current.leftChild != null && current.rightChild == null)
+       {
+           if(current == root)
+               root = current.leftChild;
+           else if(isLeftChild)
+               parent.leftChild = current.leftChild;
+           else
+               parent.rightChild = current.leftChild;
+       }
+      else { // two children
+       Node successorParent = current;
+       Node successor = current.rightChild;
+       while (successor.leftChild != null) {
+        successorParent = successor;
+        successor = successor.leftChild;
+    }
+    current.iData = successor.iData;
+    if (successorParent == current) {
+        successorParent.rightChild = successor.rightChild;
+    } else {
+        successorParent.leftChild = successor.rightChild;
+    }
+}
+       return true;
 
       }  // end delete()
 
